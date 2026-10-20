@@ -141,13 +141,10 @@ export default function StartScreen({ onStartSimulation, records }) {
               <div className="relative z-10 flex-1 flex flex-col items-center justify-evenly text-center py-2">
                 {/* Título Principal Pixelado */}
                 <div>
-                  <div className="font-pixel text-[9px] sm:text-xs text-[#5CE1E6] tracking-widest mb-2 arcade-text-shadow">
-                    POPAYÁN, CAUCA // COLOMBIA
-                  </div>
                   <h2 className="font-pixel text-lg sm:text-2xl md:text-3xl text-[#FFD400] arcade-text-shadow leading-tight">
                     AGROCAFÉ COLOMBIANO
                   </h2>
-                  <div className="font-pixel text-xs sm:text-sm text-white arcade-text-shadow mt-2">
+                  <div className="font-pixel text-xs sm:text-sm text-[#5CE1E6] arcade-text-shadow mt-2 tracking-wider">
                     SWIPE &amp; SURVIVE S.A.S.
                   </div>
                 </div>

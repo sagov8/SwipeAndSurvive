@@ -81,7 +81,7 @@ export default function AuditReport({
         <div className="shrink-0">
           <div className="flex items-center justify-between gap-2 mb-2.5">
             <span className="font-pixel text-[9px] sm:text-[10px] text-[#7CD1CF]">
-              AUDITORÍA SISTÉMICA TGS // TRIMESTRE {quarter}/{maxQuarters}
+              Sobreviviste: {quarter}/{maxQuarters} trimestres
             </span>
           </div>
 
@@ -335,9 +335,9 @@ export default function AuditReport({
           {/* ============================================================== */}
           {activeTab === 'STAT_4' && (
             <div className="w-full max-w-2xl mx-auto space-y-2.5">
-              <div className="text-center mb-2">
-                <span className="inline-block px-3 py-1 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[10px]">
-                  ESTADÍSTICA 4 // TOP 3 DECISIONES CON MAYOR IMPACTO
+              <div className="text-center mb-1">
+                <span className="inline-block px-3 py-0.5 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[9px]">
+                  ESTADÍSTICA 4 // TOP DECISIONES (IMPACTO POSITIVO VS NEGATIVO)
                 </span>
               </div>
 
@@ -347,35 +347,74 @@ export default function AuditReport({
                 </div>
               ) : (
                 <div className="space-y-2.5">
-                  {top3Decisions.map((item, idx) => (
-                    <div
-                      key={`${item.quarter}-${idx}`}
-                      className="rounded-xl bg-[#08182B] border-2 border-white/50 p-3 sm:p-3.5 flex flex-col justify-between shadow-[0_4px_0_#0B1020]"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                        <span className="font-pixel text-[10px] text-[#FFD400]">
-                          #{idx + 1} — TRIMESTRE {item.quarter} ({item.cardTitle})
-                        </span>
-                        <span className="font-vt text-base px-2 py-0.5 rounded bg-[#0F2C4C] text-[#7CD1CF] border border-white/20">
-                          {item.category}
-                        </span>
-                      </div>
+                  {top3Decisions.map((item, idx) => {
+                    const deltas = item.appliedDeltas || {};
+                    const subLabels = {
+                      liquidity: { name: 'Finanzas', icon: '💰' },
+                      morale: { name: 'Talento', icon: '👥' },
+                      demand: { name: 'Comercial', icon: '☕' },
+                      tech: { name: 'Planta/Log.', icon: '⚙️' },
+                    };
 
-                      <div className="font-vt text-xl text-[#42F58B] leading-tight">
-                        ▶ Decisión: &ldquo;{item.decisionLabel}&rdquo;
-                      </div>
+                    const positives = Object.entries(deltas)
+                      .filter(([, v]) => v > 0)
+                      .map(([k, v]) => `${subLabels[k]?.name || k} +${v}%`);
 
-                      <p className="font-vt text-lg text-white/90 leading-tight mt-0.5">
-                        {item.causalSummary}
-                      </p>
+                    const negatives = Object.entries(deltas)
+                      .filter(([, v]) => v < 0)
+                      .map(([k, v]) => `${subLabels[k]?.name || k} ${v}%`);
 
-                      {item.dominoEvents?.length > 0 && (
-                        <div className="mt-1.5 pt-1 border-t border-white/20 font-vt text-base text-[#FF8A93] leading-tight">
-                          ⚡ {item.dominoEvents.join(' | ')}
+                    return (
+                      <div
+                        key={`${item.quarter}-${idx}`}
+                        className="rounded-xl bg-[#08182B] border-2 border-white/50 p-3 sm:p-3.5 flex flex-col justify-between shadow-[0_4px_0_#0B1020]"
+                      >
+                        {/* Cabecera resumida */}
+                        <div className="flex flex-wrap items-center justify-between gap-1 mb-1 pb-1 border-b border-white/15">
+                          <span className="font-pixel text-[9px] text-[#FFD400]">
+                            #{idx + 1} TRIMESTRE {item.quarter} // {item.cardTitle}
+                          </span>
+                          <span className="font-pixel text-[8px] px-1.5 py-0.5 rounded bg-[#0F2C4C] text-[#7CD1CF] border border-white/20">
+                            {item.category}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  ))}
+
+                        {/* Decisión tomada */}
+                        <div className="font-vt text-lg text-white font-bold leading-tight mb-1.5">
+                          ▶ <span className="text-[#FFD400]">Decisión:</span> &ldquo;{item.decisionLabel}&rdquo;
+                        </div>
+
+                        {/* Comparación Impacto Positivo vs Negativo */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-1">
+                          <div className="rounded-lg bg-[#0F332B] border border-[#42F58B]/50 px-2 py-1 flex items-center gap-1.5">
+                            <span className="font-pixel text-[8px] text-[#42F58B] shrink-0">▲ POSITIVO:</span>
+                            <span className="font-vt text-base text-white truncate">
+                              {positives.length > 0 ? positives.join(', ') : 'Ninguno'}
+                            </span>
+                          </div>
+
+                          <div className="rounded-lg bg-[#3B1022] border border-[#E53945]/50 px-2 py-1 flex items-center gap-1.5">
+                            <span className="font-pixel text-[8px] text-[#FF8A93] shrink-0">▼ NEGATIVO:</span>
+                            <span className="font-vt text-base text-white truncate">
+                              {negatives.length > 0 ? negatives.join(', ') : 'Ninguno'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Alerta de efecto dominó o deuda diferida */}
+                        {(item.dominoEvents?.length > 0 || item.delayedSpawned) && (
+                          <div className="mt-1 pt-1 border-t border-white/10 flex flex-wrap gap-2 text-xs font-vt text-[#FF8A93]">
+                            {item.dominoEvents?.length > 0 && (
+                              <span>⚡ {item.dominoEvents.join(' | ')}</span>
+                            )}
+                            {item.delayedSpawned && (
+                              <span className="text-[#F5C66D]">⏳ Deuda a +3T: {item.delayedSpawned}</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

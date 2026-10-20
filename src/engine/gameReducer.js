@@ -319,6 +319,7 @@ export function gameReducer(state, action) {
         tgsConcept: card.tgsConcept,
         decisionLabel: choice.label,
         causalSummary: choice.causalSummary,
+        appliedDeltas: { ...appliedDeltas },
         tickerText,
         dominoEvents,
         r1Triggered: r1TriggeredThisTurn,
