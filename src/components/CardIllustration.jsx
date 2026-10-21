@@ -263,7 +263,135 @@ export default function CardIllustration({ card }) {
       );
     }
 
-    // 9. Dirección Estratégica / Plan Maestro / ERP / Neguentropía
+    // 9. Minga Indígena y Cierre Entrada Norte Popayán (ENV_CAUCA_01)
+    if (id === 'ENV_CAUCA_01') {
+      return (
+        <svg viewBox="0 0 160 80" className="w-full h-full" fill="none">
+          <rect x="0" y="0" width="160" height="80" fill="#1C1412" />
+          {/* Carretera Panamericana */}
+          <rect x="0" y="52" width="160" height="28" fill="#29201C" />
+          <line x1="0" y1="66" x2="160" y2="66" stroke="#FFD400" strokeWidth="2" strokeDasharray="6 6" />
+          {/* Barricada / Troncos y bandera */}
+          <rect x="45" y="44" width="70" height="10" fill="#8B4513" stroke="#0B1020" strokeWidth="1.5" />
+          <rect x="52" y="36" width="56" height="8" fill="#A0522D" stroke="#0B1020" strokeWidth="1.5" />
+          {/* Bastón de mando / Bandera de la Guardia */}
+          <line x1="72" y1="14" x2="72" y2="44" stroke="#D2B48C" strokeWidth="2" />
+          <polygon points="72,14 88,18 72,24" fill="#42F58B" stroke="#0B1020" strokeWidth="1" />
+          <polygon points="72,24 88,28 72,34" fill="#E53945" stroke="#0B1020" strokeWidth="1" />
+          <text x="80" y="10" textAnchor="middle" fill="#FFD400" fontFamily="'Press Start 2P'" fontSize="6">MINGA INDÍGENA</text>
+          <text x="80" y="76" textAnchor="middle" fill="#FF8A93" fontFamily="'Press Start 2P'" fontSize="5">VARIANTE NORTE CERRADA</text>
+        </svg>
+      );
+    }
+
+    // 10. Alza TRM y Especulación en Bolsa NY (ENV_CAUCA_02)
+    if (id === 'ENV_CAUCA_02') {
+      return (
+        <svg viewBox="0 0 160 80" className="w-full h-full" fill="none">
+          <rect x="0" y="0" width="160" height="80" fill="#0E1B26" />
+          {/* Ticker y velas alcistas */}
+          <line x1="20" y1="60" x2="140" y2="60" stroke="#1F3C55" strokeWidth="1.5" />
+          <line x1="30" y1="55" x2="30" y2="35" stroke="#42F58B" strokeWidth="1.5" />
+          <rect x="26" y="40" width="8" height="12" fill="#42F58B" />
+          <line x1="55" y1="52" x2="55" y2="28" stroke="#42F58B" strokeWidth="1.5" />
+          <rect x="51" y="32" width="8" height="15" fill="#42F58B" />
+          <line x1="80" y1="45" x2="80" y2="18" stroke="#FFD400" strokeWidth="1.5" />
+          <rect x="76" y="22" width="8" height="18" fill="#FFD400" />
+          <line x1="105" y1="38" x2="105" y2="12" stroke="#42F58B" strokeWidth="1.5" />
+          <rect x="101" y="14" width="8" height="20" fill="#42F58B" />
+          {/* Símbolo Dólar parpadeante */}
+          <g transform="translate(126, 12)">
+            <circle cx="12" cy="12" r="10" fill="#FFD400" stroke="#0B1020" strokeWidth="1.5" className="animate-pulse" />
+            <text x="12" y="16" textAnchor="middle" fill="#0B1020" fontFamily="'Press Start 2P'" fontSize="9">$</text>
+          </g>
+          <text x="80" y="74" textAnchor="middle" fill="#FFD400" fontFamily="'Press Start 2P'" fontSize="6">ALZA TRM &amp; BOLSA NY</text>
+        </svg>
+      );
+    }
+
+    // 11. Falla Eléctrica y Racionamiento en Popayán (ENV_CAUCA_03)
+    if (id === 'ENV_CAUCA_03') {
+      return (
+        <svg viewBox="0 0 160 80" className="w-full h-full" fill="none">
+          <rect x="0" y="0" width="160" height="80" fill="#080C14" />
+          {/* Poste eléctrico averiado */}
+          <line x1="45" y1="70" x2="45" y2="20" stroke="#486581" strokeWidth="3" />
+          <line x1="30" y1="26" x2="60" y2="26" stroke="#486581" strokeWidth="2.5" />
+          <line x1="45" y1="26" x2="85" y2="52" stroke="#FF6478" strokeWidth="1.5" strokeDasharray="3 3" />
+          {/* Rayo de cortocircuito */}
+          <polygon points="88,14 78,34 86,34 76,54 98,30 88,30" fill="#FFD400" stroke="#E53945" strokeWidth="1.5" className="animate-ping" />
+          <text x="80" y="72" textAnchor="middle" fill="#FF6478" fontFamily="'Press Start 2P'" fontSize="6">APAGÓN EN PLANTA (CEO)</text>
+        </svg>
+      );
+    }
+
+    // 12. Paro Camionero Puerto de Buenaventura (ENV_CAUCA_04)
+    if (id === 'ENV_CAUCA_04') {
+      return (
+        <svg viewBox="0 0 160 80" className="w-full h-full" fill="none">
+          <rect x="0" y="0" width="160" height="80" fill="#12202E" />
+          {/* Contenedores apilados en puerto */}
+          <rect x="18" y="22" width="36" height="22" fill="#E53945" stroke="#FFFFFF" strokeWidth="1.2" />
+          <rect x="18" y="44" width="36" height="22" fill="#246A9A" stroke="#FFFFFF" strokeWidth="1.2" />
+          {/* Camión detenido */}
+          <rect x="65" y="38" width="45" height="26" fill="#FFD400" stroke="#0B1020" strokeWidth="1.5" />
+          <rect x="110" y="46" width="18" height="18" fill="#7CD1CF" stroke="#0B1020" strokeWidth="1.5" />
+          <circle cx="80" cy="65" r="5" fill="#0B1020" />
+          <circle cx="100" cy="65" r="5" fill="#0B1020" />
+          <circle cx="120" cy="65" r="5" fill="#0B1020" />
+          {/* Señal de bloqueo */}
+          <text x="80" y="14" textAnchor="middle" fill="#FF6478" fontFamily="'Press Start 2P'" fontSize="6">PARO A BUENAVENTURA</text>
+          <text x="80" y="76" textAnchor="middle" fill="#FFD400" fontFamily="'Press Start 2P'" fontSize="5">RUTAS Y PUERTO BLOQUEADOS</text>
+        </svg>
+      );
+    }
+
+    // 13. Auditoría Tributaria DIAN (ENV_CAUCA_05)
+    if (id === 'ENV_CAUCA_05') {
+      return (
+        <svg viewBox="0 0 160 80" className="w-full h-full" fill="none">
+          <rect x="0" y="0" width="160" height="80" fill="#1B1424" />
+          {/* Carpeta y formulario fiscal */}
+          <rect x="52" y="16" width="56" height="50" rx="3" fill="#F4F4F9" stroke="#0B1020" strokeWidth="2" />
+          {/* Líneas de texto del acta */}
+          <line x1="60" y1="26" x2="98" y2="26" stroke="#243870" strokeWidth="2" />
+          <line x1="60" y1="34" x2="94" y2="34" stroke="#8898AA" strokeWidth="1.5" />
+          <line x1="60" y1="42" x2="90" y2="42" stroke="#8898AA" strokeWidth="1.5" />
+          {/* Sello oficial DIAN */}
+          <circle cx="88" cy="50" r="10" fill="#E53945" stroke="#FFFFFF" strokeWidth="1.5" />
+          <text x="88" y="53" textAnchor="middle" fill="#FFFFFF" fontFamily="'Press Start 2P'" fontSize="5">DIAN</text>
+          <text x="80" y="12" textAnchor="middle" fill="#FF8A93" fontFamily="'Press Start 2P'" fontSize="6">AUDITORÍA FISCAL RURAL</text>
+          <text x="80" y="74" textAnchor="middle" fill="#FFD400" fontFamily="'Press Start 2P'" fontSize="5">COMPRAS EN VEREDAS</text>
+        </svg>
+      );
+    }
+
+    // 14. Escasez de Recolectores en el Macizo Caucano (ENV_CAUCA_06)
+    if (id === 'ENV_CAUCA_06') {
+      return (
+        <svg viewBox="0 0 160 80" className="w-full h-full" fill="none">
+          <rect x="0" y="0" width="160" height="80" fill="#142618" />
+          {/* Pendientes montañosas del Macizo */}
+          <polygon points="0,60 40,26 90,65" fill="#1E4024" />
+          <polygon points="60,65 110,20 160,60" fill="#295430" />
+          {/* Cafetos cargados de cerezas rojas */}
+          <g transform="translate(68, 30)">
+            <line x1="12" y1="30" x2="12" y2="10" stroke="#5A3A1A" strokeWidth="3" />
+            <circle cx="6" cy="14" r="5" fill="#E53945" className="animate-pulse" />
+            <circle cx="18" cy="12" r="5" fill="#E53945" className="animate-pulse" />
+            <circle cx="12" cy="6" r="5" fill="#E53945" />
+            <circle cx="6" cy="22" r="4" fill="#8B0000" />
+            <circle cx="18" cy="20" r="4" fill="#8B0000" />
+          </g>
+          {/* Canasta vacía en el suelo */}
+          <rect x="100" y="48" width="16" height="12" rx="2" fill="#8B5A2B" stroke="#0B1020" strokeWidth="1" />
+          <text x="80" y="14" textAnchor="middle" fill="#FFD400" fontFamily="'Press Start 2P'" fontSize="6">ESCASEZ RECOLECTORES</text>
+          <text x="80" y="74" textAnchor="middle" fill="#FF8A93" fontFamily="'Press Start 2P'" fontSize="5">MACIZO CAUCANO EN PICO</text>
+        </svg>
+      );
+    }
+
+    // 15. Dirección Estratégica / Plan Maestro / ERP / Neguentropía
     return (
       <svg viewBox="0 0 160 80" className="w-full h-full" fill="none">
         <rect x="0" y="0" width="160" height="80" fill="#0C1F38" />

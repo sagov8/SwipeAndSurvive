@@ -10,8 +10,8 @@ export function getNexusDiagnostic(state) {
   if (currentCard?.category === 'ENVIRONMENT') {
     return {
       level: 'CRISIS',
-      tag: 'ENTORNO NACIONAL COLOMBIANO',
-      message: `DIRECCIÓN: Choque externo en el Trimestre ${quarter}. Como sistema abierto en el Cauca, AgroCafé debe adaptar compras, logística y ventas sin descompensar la planta.`,
+      tag: `CRISIS ENTORNO T${quarter} // ${currentCard.title ? currentCard.title.toUpperCase() : 'CHOQUE EXTERNO'}`,
+      message: `DIRECCIÓN: Choque exógeno en el Trimestre ${quarter} (${currentCard.title || 'Evento'}). Como sistema abierto en el Cauca, AgroCafé debe amortiguar la perturbación protegiendo la viabilidad de la empresa.`,
     };
   }
 

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { simulateOptionPreview } from '../engine/gameReducer';
 import CardIllustration from './CardIllustration';
+import { SubsystemIcon } from './SubsystemIcons';
 
 /**
  * Avatares Pixel Art estilo Arcade 8-Bit
@@ -102,8 +103,8 @@ function RadarSidePanel({ side, title, optionLabel, sim, isHighlighted, onSelect
             key={it.k}
             className="flex items-center justify-between px-2 py-1 rounded bg-[#0F2C4C] border border-white/25"
           >
-            <span className="font-pixel text-[7px] sm:text-[8px] text-white flex items-center gap-1">
-              <span>{it.icon}</span>
+            <span className="font-pixel text-[7px] sm:text-[8px] text-white flex items-center gap-1.5">
+              <SubsystemIcon subsystemKey={it.k} className="w-3 h-3 shrink-0" />
               <span>{it.name}</span>
             </span>
 

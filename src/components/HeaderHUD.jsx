@@ -1,25 +1,31 @@
 import React from 'react';
+import {
+  PixelIconFinance,
+  PixelIconTalent,
+  PixelIconCommercial,
+  PixelIconTech,
+} from './SubsystemIcons';
 
 const SUBSYSTEMS = [
   {
     key: 'liquidity',
     label: 'FINANZAS',
-    icon: '💰',
+    Icon: PixelIconFinance,
   },
   {
     key: 'morale',
     label: 'TALENTO',
-    icon: '👥',
+    Icon: PixelIconTalent,
   },
   {
     key: 'demand',
     label: 'COMERCIAL',
-    icon: '☕',
+    Icon: PixelIconCommercial,
   },
   {
     key: 'tech',
     label: 'PLANTA/LOG.',
-    icon: '⚙️',
+    Icon: PixelIconTech,
   },
 ];
 
@@ -48,6 +54,9 @@ export default function HeaderHUD({
   gameMode,
   score,
   overloadCounter,
+  diceUnlocked = false,
+  diceUsed = false,
+  onOpenDice,
 }) {
   const activeOption =
     previewDirection === 'left'
@@ -74,15 +83,16 @@ export default function HeaderHUD({
               (() => {
                 const playerTurn = ((quarter - 1) % 4) + 1;
                 const playerRoles = {
-                  1: { name: 'FINANZAS', icon: '💰', color: 'bg-[#FFD400] text-[#0B1020]' },
-                  2: { name: 'TALENTO', icon: '👥', color: 'bg-[#42F58B] text-[#0B1020]' },
-                  3: { name: 'COMERCIAL', icon: '☕', color: 'bg-[#FF5E7E] text-white' },
-                  4: { name: 'PLANTA/LOG', icon: '⚙️', color: 'bg-[#36E2F8] text-[#0B1020]' },
+                  1: { name: 'FINANZAS', Icon: PixelIconFinance, color: 'bg-[#FFD400] text-[#0B1020]' },
+                  2: { name: 'TALENTO', Icon: PixelIconTalent, color: 'bg-[#42F58B] text-[#0B1020]' },
+                  3: { name: 'COMERCIAL', Icon: PixelIconCommercial, color: 'bg-[#FF5E7E] text-white' },
+                  4: { name: 'PLANTA/LOG', Icon: PixelIconTech, color: 'bg-[#36E2F8] text-[#0B1020]' },
                 };
                 const p = playerRoles[playerTurn];
+                const PIcon = p.Icon;
                 return (
                   <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-pixel text-[7px] sm:text-[8px] md:text-[9px] border border-white flex items-center gap-1 shadow-[0_1px_0_#0B1020] animate-pulse ${p.color}`}>
-                    <span>👾</span>
+                    <PIcon className="w-3 h-3 shrink-0" />
                     <span>TURNO: P{playerTurn} ({p.name})</span>
                   </div>
                 );
@@ -110,7 +120,7 @@ export default function HeaderHUD({
             )}
           </div>
 
-          {/* Right Controls: Radar Cibernético (Lupa Pixel Art) & Speaker Audio Icon */}
+          {/* Right Controls: Radar, Dado de la Suerte & Speaker Audio Icon */}
           <div className="flex items-center gap-1 sm:gap-1.5">
             <button
               type="button"
@@ -130,6 +140,42 @@ export default function HeaderHUD({
               </svg>
               <span>RADAR {radarActiveForTurn ? 'ACTIVO' : `${radarCharges}/3`}</span>
             </button>
+
+            {/* Botón de Dado de la Suerte (Desbloqueado a 1.200 puntos) */}
+            {diceUsed ? (
+              <button
+                type="button"
+                disabled
+                title="Dado de la Suerte: Ya utilizado en esta partida"
+                className="pixel-box px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-pixel text-[8px] sm:text-[9px] md:text-[10px] flex items-center gap-1 border border-white/20 bg-[#0c192c] text-white/40 cursor-not-allowed"
+              >
+                <span className="text-[10px] sm:text-xs">🎲</span>
+                <span className="hidden sm:inline">DADO</span>
+                <span className="text-[#42F58B]">✓</span>
+              </button>
+            ) : diceUnlocked ? (
+              <button
+                type="button"
+                onClick={onOpenDice}
+                title="¡Dado de la Suerte disponible! Haz clic para lanzar o guardar"
+                className="pixel-box px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded font-pixel text-[8px] sm:text-[9px] md:text-[10px] transition-all flex items-center gap-1 border-2 border-white bg-[#42F58B] hover:bg-[#5ef79f] text-[#0B1020] cursor-pointer animate-pulse shadow-[0_0_8px_#42F58B]"
+              >
+                <span className="text-[10px] sm:text-xs">🎲</span>
+                <span>DADO</span>
+                <span className="bg-[#E53945] text-white text-[7px] px-1 rounded-sm animate-bounce font-pixel">!</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled
+                title="Dado de la Suerte: Se desbloquea al alcanzar 1.200 puntos"
+                className="pixel-box px-1.5 sm:px-2 py-0.5 sm:py-1 rounded font-pixel text-[8px] sm:text-[9px] md:text-[10px] flex items-center gap-1 border border-white/20 bg-[#0c192c] text-white/40 cursor-not-allowed opacity-80"
+              >
+                <span className="text-[10px] sm:text-xs">🎲</span>
+                <span className="hidden sm:inline">DADO</span>
+                <span className="text-[7px] text-[#FFD400]">🔒1200</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -193,7 +239,7 @@ export default function HeaderHUD({
               >
                 <div className="flex items-center justify-between mb-0.5">
                   <div className="flex items-center gap-1 min-w-0">
-                    <span className="text-xs sm:text-sm">{sub.icon}</span>
+                    <sub.Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                     <span className="font-pixel text-[8px] sm:text-[9px] md:text-[10px] text-white truncate">
                       {sub.label}
                     </span>

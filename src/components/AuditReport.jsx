@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { STRATEGY_PATHS } from '../data/cardsCatalog';
 import { soundEngine } from '../engine/soundEngine';
+import { SubsystemIcon } from './SubsystemIcons';
 
 export function computeRankAndSummary(gameState) {
   const { status, score, quarter, causalHistory, auditStats } = gameState;
@@ -160,10 +161,10 @@ export default function AuditReport({
               {/* Estado Final de los 4 Indicadores */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-xl">
                 {[
-                  { label: 'FINANZAS', icon: '💰', val: metrics.liquidity },
-                  { label: 'TALENTO', icon: '👥', val: metrics.morale },
-                  { label: 'COMERCIAL', icon: '☕', val: metrics.demand },
-                  { label: 'PLANTA/LOG.', icon: '⚙️', val: metrics.tech },
+                  { label: 'FINANZAS', key: 'liquidity', val: metrics.liquidity },
+                  { label: 'TALENTO', key: 'morale', val: metrics.morale },
+                  { label: 'COMERCIAL', key: 'demand', val: metrics.demand },
+                  { label: 'PLANTA/LOG.', key: 'tech', val: metrics.tech },
                 ].map((m) => (
                   <div
                     key={m.label}
@@ -182,8 +183,9 @@ export default function AuditReport({
                       {m.val}%
                     </span>
 
-                    {/* Título de cada subsistema abajo */}
-                    <span className="font-pixel text-[8px] sm:text-[9px] text-white flex items-center gap-1 text-center">
+                    {/* Título e ícono pixel art de cada subsistema abajo */}
+                    <span className="font-pixel text-[8px] sm:text-[9px] text-white flex items-center gap-1.5 text-center">
+                      <SubsystemIcon subsystemKey={m.key} className="w-3.5 h-3.5 shrink-0" />
                       <span>{m.label}</span>
                     </span>
                   </div>

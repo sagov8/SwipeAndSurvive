@@ -316,6 +316,65 @@ class CyberSoundEngine {
       // Ignore audio errors
     }
   }
+
+  /**
+   * Efecto sonoro de dado rodando (sonido de traqueteo/dados retro con ráfagas de clicks)
+   */
+  playDiceRoll() {
+    if (this.muted) return;
+    try {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      // Generar 5 clicks rápidos espaciados
+      for (let i = 0; i < 6; i++) {
+        const clickTime = now + i * 0.07;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(280 + (i % 3) * 120, clickTime);
+
+        gain.gain.setValueAtTime(0.1, clickTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, clickTime + 0.035);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(clickTime);
+        osc.stop(clickTime + 0.04);
+      }
+    } catch {
+      // Ignore audio errors
+    }
+  }
+
+  /**
+   * Efecto sonoro al caer el dado (acorde de resolución arcade)
+   */
+  playDiceLand() {
+    if (this.muted) return;
+    try {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const chord = [330, 440, 660];
+      chord.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+
+        gain.gain.setValueAtTime(0.1, now + idx * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now + idx * 0.04);
+        osc.stop(now + 0.38);
+      });
+    } catch {
+      // Ignore audio errors
+    }
+  }
 }
 
 export const soundEngine = new CyberSoundEngine();

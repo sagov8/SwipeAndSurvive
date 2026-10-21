@@ -8,6 +8,7 @@ import SystemicNetwork from './components/SystemicNetwork';
 import SwipeCard from './components/SwipeCard';
 import BottomControl from './components/BottomControl';
 import CrisisModal from './components/CrisisModal';
+import DiceModal from './components/DiceModal';
 import AuditReport, { computeRankAndSummary } from './components/AuditReport';
 import DecisionFeedbackOverlay from './components/DecisionFeedbackOverlay';
 
@@ -19,6 +20,7 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(false);
   const [records, setRecords] = useState(() => loadTournamentRecords());
   const [transientFeedback, setTransientFeedback] = useState(null);
+  const [isDiceModalOpen, setIsDiceModalOpen] = useState(false);
 
   const savedEndRef = useRef(false);
   const feedbackTimeoutRef = useRef(null);
@@ -54,6 +56,24 @@ export default function App() {
   const handleAcknowledgeCrisis = useCallback(() => {
     soundEngine.playCardAppear();
     dispatch({ type: 'DISMISS_CRISIS_MODAL' });
+  }, []);
+
+  // Abrir y cerrar el modal del Dado de la Suerte (desbloqueado a 1.200 pts)
+  const handleOpenDice = useCallback(() => {
+    if (!gameState.diceUnlocked || gameState.diceUsed || isAnimating || gameState.status !== 'PLAYING') return;
+    setIsDiceModalOpen(true);
+  }, [gameState.diceUnlocked, gameState.diceUsed, isAnimating, gameState.status]);
+
+  const handleCloseDice = useCallback(() => {
+    setIsDiceModalOpen(false);
+  }, []);
+
+  // Aplicar evento fortuito del dado sobre el sistema
+  const handleApplyDiceEvent = useCallback((event) => {
+    dispatch({
+      type: 'APPLY_DICE_EVENT',
+      payload: { event },
+    });
   }, []);
 
   // Confirmar decisión con Lock de Input de ~450ms para evitar condiciones de carrera y disparar efectos transitorios
@@ -212,6 +232,9 @@ export default function App() {
             gameMode={gameState.gameMode}
             score={gameState.score}
             overloadCounter={gameState.overloadCounter}
+            diceUnlocked={gameState.diceUnlocked}
+            diceUsed={gameState.diceUsed}
+            onOpenDice={handleOpenDice}
           />
 
           <main className="flex-1 min-h-0 flex items-center justify-center relative z-10 overflow-y-auto px-1 sm:px-2 py-0.5 sm:py-1">
@@ -241,6 +264,13 @@ export default function App() {
           onAcknowledge={handleAcknowledgeCrisis}
         />
       )}
+
+      {/* Modal del Dado de la Suerte (Desbloqueado a 1.200 pts) */}
+      <DiceModal
+        isOpen={isDiceModalOpen}
+        onClose={handleCloseDice}
+        onApplyEvent={handleApplyDiceEvent}
+      />
 
       {/* Pantalla Final: Informe de Auditoría Sistémica para Evaluación Docente */}
       {(gameState.status === 'VICTORY' || gameState.status === 'GAMEOVER') && (

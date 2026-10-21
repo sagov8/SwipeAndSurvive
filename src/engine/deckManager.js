@@ -1,11 +1,36 @@
-import { CARDS_CATALOG } from '../data/cardsCatalog';
+import { CARDS_CATALOG } from '../data/cardsCatalog.js';
 
-const CRISIS_QUARTERS = {
-  5: 'ENV_Q05',
-  10: 'ENV_Q10',
-  15: 'ENV_Q15',
-  19: 'ENV_Q19',
-};
+export const ALL_CRISIS_CARD_IDS = [
+  'ENV_Q05',
+  'ENV_Q10',
+  'ENV_Q15',
+  'ENV_Q19',
+  'ENV_CAUCA_01',
+  'ENV_CAUCA_02',
+  'ENV_CAUCA_03',
+  'ENV_CAUCA_04',
+  'ENV_CAUCA_05',
+  'ENV_CAUCA_06',
+];
+
+/**
+ * Genera el cronograma aleatorio de crisis del entorno para la partida.
+ * Selecciona 4 cartas únicas al azar del conjunto de 10 crisis.
+ * Los primeros 3 choques ocurren en los trimestres 5, 10 y 15.
+ * El 4° y último choque se adelanta aleatoriamente al trimestre 17 o 18
+ * (en vez del 19) para aumentar la dificultad y obligar a estabilizar
+ * el sistema durante 2 o 3 trimestres posteriores antes de la victoria.
+ */
+export function generateCrisisSchedule() {
+  const shuffled = shuffleCards(ALL_CRISIS_CARD_IDS);
+  const finalQuarter = Math.random() < 0.5 ? 17 : 18;
+  return {
+    5: shuffled[0],
+    10: shuffled[1],
+    15: shuffled[2],
+    [finalQuarter]: shuffled[3],
+  };
+}
 
 /**
  * Obtiene una carta por su ID desde el catálogo base
@@ -35,7 +60,7 @@ export function shuffleCards(array) {
 
 /**
  * Selecciona la carta correspondiente al trimestre actual respetando la jerarquía de prioridades:
- * 1. Crisis del Entorno Externo en trimestres 5, 10, 15, 19 (si no se ha jugado aún en ese trimestre)
+ * 1. Crisis del Entorno Externo (según cronograma aleatorio en Q5, Q10, Q15 y Q17/18)
  * 2. Cartas de Consecuencia Diferida (delayedQueue cuyo triggerQuarter <= targetQuarter)
  * 3. Carta normal del mazo filtrando las últimas 5 cartas jugadas (recentCardIds)
  */
@@ -45,13 +70,15 @@ export function drawNextCard({
   delayedQueue,
   recentCardIds = [],
   resolvedUniqueIds = [],
+  crisisSchedule = null,
 }) {
   let updatedDeck = [...deck];
   let updatedDelayedQueue = [...delayedQueue];
   let updatedResolvedUnique = [...resolvedUniqueIds];
 
-  // 1. Prioridad Absoluta: Crisis del Entorno Externo (Q5, Q10, Q15, Q19)
-  const crisisId = CRISIS_QUARTERS[targetQuarter];
+  // 1. Prioridad Absoluta: Crisis del Entorno Externo
+  const schedule = crisisSchedule || { 5: 'ENV_Q05', 10: 'ENV_Q10', 15: 'ENV_Q15', 17: 'ENV_Q19' };
+  const crisisId = schedule[targetQuarter];
   if (crisisId && !updatedResolvedUnique.includes(crisisId)) {
     const crisisCard = getCardById(crisisId);
     if (crisisCard) {
@@ -59,6 +86,8 @@ export function drawNextCard({
       return {
         card: {
           ...crisisCard,
+          categoryLabel: `Entorno Nacional (Trimestre ${targetQuarter})`,
+          role: `Choque del Entorno — Trimestre ${targetQuarter}`,
           isCrisisEvent: true,
         },
         deck: updatedDeck,

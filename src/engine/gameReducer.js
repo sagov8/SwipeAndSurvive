@@ -1,5 +1,5 @@
-import { STRATEGY_PATHS } from '../data/cardsCatalog';
-import { buildInitialDeck, drawNextCard } from './deckManager';
+import { STRATEGY_PATHS } from '../data/cardsCatalog.js';
+import { buildInitialDeck, drawNextCard, generateCrisisSchedule } from './deckManager.js';
 
 export const initialGameState = {
   quarter: 1,
@@ -7,6 +7,7 @@ export const initialGameState = {
   status: 'START', // 'START' | 'PLAYING' | 'CRISIS_MODAL' | 'VICTORY' | 'GAMEOVER'
   gameMode: 'SOLO', // 'SOLO' (1 Jugador) | 'BOARD' (Cooperativo Junta Directiva 2-4J)
   strategyPath: null, // 'AUTOMATIZACION' | 'CAPACITACION' | 'INNOVACION' | 'MEJORA_CONTINUA'
+  crisisSchedule: null, // { 5: 'ENV_...', 10: 'ENV_...', 15: 'ENV_...', 17|18: 'ENV_...' }
   metrics: {
     liquidity: 55, // Rango 0 - 100
     morale: 55,    // Rango 0 - 100
@@ -25,6 +26,9 @@ export const initialGameState = {
   lastCausalTicker: 'AgroCafé Colombiano S.A.S. (Popayán) en operación. Esperando primera decisión en Trimestre 1...',
   activeDominoLinks: [], // [' DEMAND_TECH ', ' HR_TECH ', ' ALL_SYNERGY ']
   score: 0,
+  diceUnlocked: false, // Se desbloquea al alcanzar 1.200 puntos
+  diceUsed: false,     // Solo 1 uso en toda la partida
+  diceRollHistory: null,
   auditStats: {
     homeostasisTurns: 0,
     synergyTurns: 0,
@@ -95,12 +99,14 @@ export function gameReducer(state, action) {
     case 'START_GAME': {
       const { strategyPath, gameMode } = action.payload;
       const initialDeck = buildInitialDeck();
+      const crisisSchedule = generateCrisisSchedule();
       const firstDraw = drawNextCard({
         targetQuarter: 1,
         deck: initialDeck,
         delayedQueue: [],
         recentCardIds: [],
         resolvedUniqueIds: [],
+        crisisSchedule,
       });
 
       const stratName = STRATEGY_PATHS[strategyPath]?.name || 'Estándar';
@@ -110,6 +116,7 @@ export function gameReducer(state, action) {
         status: 'PLAYING',
         gameMode: gameMode || 'SOLO',
         strategyPath,
+        crisisSchedule,
         deck: firstDraw.deck,
         delayedQueue: firstDraw.delayedQueue,
         resolvedUniqueIds: firstDraw.resolvedUniqueIds,
@@ -141,6 +148,79 @@ export function gameReducer(state, action) {
       return {
         ...state,
         status: 'PLAYING',
+      };
+    }
+
+    case 'APPLY_DICE_EVENT': {
+      if (!state.diceUnlocked || state.diceUsed || state.status !== 'PLAYING') {
+        return state;
+      }
+      const { event } = action.payload;
+      if (!event) return state;
+
+      const newMetrics = {
+        liquidity: clampMetric(state.metrics.liquidity + (event.effects.liquidity || 0)),
+        morale: clampMetric(state.metrics.morale + (event.effects.morale || 0)),
+        demand: clampMetric(state.metrics.demand + (event.effects.demand || 0)),
+        tech: clampMetric(state.metrics.tech + (event.effects.tech || 0)),
+      };
+
+      const tickerText = `🎲 T${state.quarter} [Cara ${event.face}: ${event.title}] → ${event.summary}`;
+
+      const historyEntry = {
+        quarter: state.quarter,
+        cardId: `DICE_FACE_${event.face}`,
+        cardTitle: `🎲 Dado Fortuito: ${event.title}`,
+        category: 'Evento Fortuito',
+        tgsConcept: 'Perturbación Aleatoria Exógena',
+        decisionLabel: `Lanzamiento de Dado (Cara ${event.face})`,
+        causalSummary: event.summary,
+        appliedDeltas: { ...event.effects },
+        tickerText,
+        dominoEvents: [],
+        r1Triggered: false,
+        synergyTriggered: false,
+        delayedSpawned: null,
+        totalMagnitude:
+          Math.abs(event.effects.liquidity || 0) +
+          Math.abs(event.effects.morale || 0) +
+          Math.abs(event.effects.demand || 0) +
+          Math.abs(event.effects.tech || 0),
+        metricsAfter: { ...newMetrics },
+      };
+
+      // Verificar si alguna barra llegó a 0%
+      const collapsedSubsystem = Object.entries(newMetrics).find(([, val]) => val <= 0);
+      if (collapsedSubsystem) {
+        const subNames = {
+          liquidity: 'Finanzas y Liquidez (Falta de caja para comprar café pergamino y pagar nómina)',
+          morale: 'Talento Humano (Parálisis laboral entre los 80 trabajadores en Popayán)',
+          demand: 'Comercial y Mercadeo (Pérdida total de clientes, supermercados y cafeterías)',
+          tech: 'Producción y Logística (Colapso de planta torrefactora y cadena de abastecimiento)',
+        };
+        return {
+          ...state,
+          status: 'GAMEOVER',
+          metrics: newMetrics,
+          diceUsed: true,
+          diceRollHistory: event,
+          causalHistory: [...state.causalHistory, historyEntry],
+          lastCausalTicker: tickerText,
+          endReason: {
+            type: 'ENTROPY_ZERO',
+            title: 'CIERRE OPERATIVO TRAS EVENTO FORTUITO',
+            detail: `El evento del dado [${event.title}] redujo el área de ${subNames[collapsedSubsystem[0]]} a 0% en el Trimestre ${state.quarter}.`,
+          },
+        };
+      }
+
+      return {
+        ...state,
+        metrics: newMetrics,
+        diceUsed: true,
+        diceRollHistory: event,
+        causalHistory: [...state.causalHistory, historyEntry],
+        lastCausalTicker: tickerText,
       };
     }
 
@@ -284,6 +364,7 @@ export function gameReducer(state, action) {
       if (r1TriggeredThisTurn) turnScore -= 40;
 
       const updatedScore = Math.max(0, state.score + turnScore);
+      const isDiceUnlocked = state.diceUnlocked || updatedScore >= 1200;
 
       // Construcción de cadena causal para el Ticker y el Historial Docente
       const deltaLabels = [];
@@ -419,6 +500,7 @@ export function gameReducer(state, action) {
         delayedQueue: updatedDelayedQueue,
         recentCardIds: updatedRecent,
         resolvedUniqueIds: state.resolvedUniqueIds,
+        crisisSchedule: state.crisisSchedule,
       });
 
       const nextIsCrisisModal = nextDraw.card.category === 'ENVIRONMENT';
@@ -440,6 +522,7 @@ export function gameReducer(state, action) {
         lastCausalTicker: tickerText,
         activeDominoLinks,
         score: updatedScore,
+        diceUnlocked: isDiceUnlocked,
         auditStats: updatedAuditStats,
       };
     }
