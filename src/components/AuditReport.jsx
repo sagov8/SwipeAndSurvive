@@ -45,7 +45,7 @@ export function computeRankAndSummary(gameState) {
 
 const TABS = [
   { id: 'MAIN', label: '★ RESUMEN' },
-  { id: 'STAT_1', label: '1. EQUIFINALIDAD' },
+  { id: 'STAT_1', label: '1. VENTAJA INICIAL' },
   { id: 'STAT_2', label: '2. HOMEOSTASIS' },
   { id: 'STAT_3', label: '3. BUCLES' },
   { id: 'STAT_4', label: '4. TOP DECISIONES' },
@@ -158,20 +158,20 @@ export default function AuditReport({
               </div>
 
               {/* Estado Final de los 4 Indicadores */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-xl">
                 {[
-                  { label: '💰 FINANZAS', val: metrics.liquidity },
-                  { label: '👥 TALENTO', val: metrics.morale },
-                  { label: '☕ COMERCIAL', val: metrics.demand },
-                  { label: '⚙️ PLANTA/LOG.', val: metrics.tech },
+                  { label: 'FINANZAS', icon: '💰', val: metrics.liquidity },
+                  { label: 'TALENTO', icon: '👥', val: metrics.morale },
+                  { label: 'COMERCIAL', icon: '☕', val: metrics.demand },
+                  { label: 'PLANTA/LOG.', icon: '⚙️', val: metrics.tech },
                 ].map((m) => (
                   <div
                     key={m.label}
-                    className="rounded-lg bg-[#08182B] border-2 border-white/40 px-2.5 py-2 flex items-center justify-between"
+                    className="rounded-xl bg-[#08182B] border-2 border-white/40 p-2.5 flex flex-col items-center justify-center shadow-[0_3px_0_#0B1020]"
                   >
-                    <span className="font-pixel text-[8px] text-white">{m.label}</span>
+                    {/* Porcentaje más grande arriba */}
                     <span
-                      className={`font-pixel text-[10px] ${
+                      className={`font-pixel text-base sm:text-lg mb-1 leading-none ${
                         m.val <= 0
                           ? 'text-[#FF6478]'
                           : m.val >= 35 && m.val <= 75
@@ -181,6 +181,11 @@ export default function AuditReport({
                     >
                       {m.val}%
                     </span>
+
+                    {/* Título de cada subsistema abajo */}
+                    <span className="font-pixel text-[8px] sm:text-[9px] text-white flex items-center gap-1 text-center">
+                      <span>{m.label}</span>
+                    </span>
                   </div>
                 ))}
               </div>
@@ -188,12 +193,12 @@ export default function AuditReport({
           )}
 
           {/* ============================================================== */}
-          {/* PESTAÑA 1: RUTA DE EQUIFINALIDAD                               */}
+          {/* PESTAÑA 1: VENTAJA INICIAL (EQUIFINALIDAD)                    */}
           {/* ============================================================== */}
           {activeTab === 'STAT_1' && (
             <div className="w-full max-w-xl mx-auto rounded-2xl bg-[#08182B] border-4 border-[#7CD1CF] p-5 sm:p-6 shadow-[0_6px_0_#0B1020] text-center space-y-4">
               <div className="inline-block px-3 py-1 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[10px]">
-                ESTADÍSTICA 1 // PRINCIPIO DE EQUIFINALIDAD
+                ESTADÍSTICA 1 // VENTAJA INICIAL
               </div>
 
               <h2 className="font-pixel text-base sm:text-xl text-[#FFD400] arcade-text-shadow">
@@ -331,13 +336,13 @@ export default function AuditReport({
           )}
 
           {/* ============================================================== */}
-          {/* PESTAÑA 4: TOP 3 DECISIONES CON MAYOR EFECTO DOMINÓ            */}
+          {/* PESTAÑA 4: TOP DECISIONES — ESCALAFÓN TIPO PODIO               */}
           {/* ============================================================== */}
           {activeTab === 'STAT_4' && (
-            <div className="w-full max-w-2xl mx-auto space-y-2.5">
+            <div className="w-full max-w-2xl mx-auto space-y-3">
               <div className="text-center mb-1">
-                <span className="inline-block px-3 py-0.5 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[9px]">
-                  ESTADÍSTICA 4 // TOP DECISIONES (IMPACTO POSITIVO VS NEGATIVO)
+                <span className="inline-block px-3 py-1 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[9px] uppercase">
+                  ESTADÍSTICA 4 // PODIO DE DECISIONES DE MAYOR IMPACTO
                 </span>
               </div>
 
@@ -346,72 +351,67 @@ export default function AuditReport({
                   No se registraron decisiones en esta partida.
                 </div>
               ) : (
-                <div className="space-y-2.5">
+                <div className="space-y-4 sm:space-y-5">
                   {top3Decisions.map((item, idx) => {
-                    const deltas = item.appliedDeltas || {};
-                    const subLabels = {
-                      liquidity: { name: 'Finanzas', icon: '💰' },
-                      morale: { name: 'Talento', icon: '👥' },
-                      demand: { name: 'Comercial', icon: '☕' },
-                      tech: { name: 'Planta/Log.', icon: '⚙️' },
-                    };
-
-                    const positives = Object.entries(deltas)
-                      .filter(([, v]) => v > 0)
-                      .map(([k, v]) => `${subLabels[k]?.name || k} +${v}%`);
-
-                    const negatives = Object.entries(deltas)
-                      .filter(([, v]) => v < 0)
-                      .map(([k, v]) => `${subLabels[k]?.name || k} ${v}%`);
+                    const podiumRanks = [
+                      {
+                        place: '1ER LUGAR',
+                        badge: 'bg-[#FFD400] text-[#0B1020] border-[#0B1020]',
+                        borderColor: 'border-[#FFD400]',
+                        icon: '🥇',
+                        titleColor: 'text-[#FFD400]',
+                      },
+                      {
+                        place: '2DO LUGAR',
+                        badge: 'bg-[#E2E8F0] text-[#0B1020] border-[#0B1020]',
+                        borderColor: 'border-[#E2E8F0]',
+                        icon: '🥈',
+                        titleColor: 'text-[#E2E8F0]',
+                      },
+                      {
+                        place: '3ER LUGAR',
+                        badge: 'bg-[#CD7F32] text-white border-[#0B1020]',
+                        borderColor: 'border-[#CD7F32]',
+                        icon: '🥉',
+                        titleColor: 'text-[#CD7F32]',
+                      },
+                    ];
+                    const p = podiumRanks[idx] || podiumRanks[2];
 
                     return (
                       <div
                         key={`${item.quarter}-${idx}`}
-                        className="rounded-xl bg-[#08182B] border-2 border-white/50 p-3 sm:p-3.5 flex flex-col justify-between shadow-[0_4px_0_#0B1020]"
+                        className={`rounded-2xl bg-[#08182B] border-4 ${p.borderColor} p-4 sm:p-4.5 shadow-[0_5px_0_#0B1020] flex items-start gap-3.5 transition-all`}
                       >
-                        {/* Cabecera resumida */}
-                        <div className="flex flex-wrap items-center justify-between gap-1 mb-1 pb-1 border-b border-white/15">
-                          <span className="font-pixel text-[9px] text-[#FFD400]">
-                            #{idx + 1} TRIMESTRE {item.quarter} // {item.cardTitle}
-                          </span>
-                          <span className="font-pixel text-[8px] px-1.5 py-0.5 rounded bg-[#0F2C4C] text-[#7CD1CF] border border-white/20">
-                            {item.category}
+                        {/* Escalafón / Medalla de podio */}
+                        <div className="flex flex-col items-center justify-center shrink-0 w-14 sm:w-16">
+                          <span className="text-2xl sm:text-3xl">{p.icon}</span>
+                          <span className={`font-pixel text-[7px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded border mt-1.5 text-center leading-none ${p.badge}`}>
+                            {p.place}
                           </span>
                         </div>
 
-                        {/* Decisión tomada */}
-                        <div className="font-vt text-lg text-white font-bold leading-tight mb-1.5">
-                          ▶ <span className="text-[#FFD400]">Decisión:</span> &ldquo;{item.decisionLabel}&rdquo;
-                        </div>
-
-                        {/* Comparación Impacto Positivo vs Negativo */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-1">
-                          <div className="rounded-lg bg-[#0F332B] border border-[#42F58B]/50 px-2 py-1 flex items-center gap-1.5">
-                            <span className="font-pixel text-[8px] text-[#42F58B] shrink-0">▲ POSITIVO:</span>
-                            <span className="font-vt text-base text-white truncate">
-                              {positives.length > 0 ? positives.join(', ') : 'Ninguno'}
+                        {/* Contenido limpio: Título + Breve descripción de la decisión */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+                            <h3 className={`font-pixel text-[10px] sm:text-xs leading-snug break-words ${p.titleColor}`}>
+                              {item.cardTitle}
+                            </h3>
+                            <span className="font-pixel text-[8px] text-[#5CE1E6] shrink-0">
+                              T{item.quarter}
                             </span>
                           </div>
 
-                          <div className="rounded-lg bg-[#3B1022] border border-[#E53945]/50 px-2 py-1 flex items-center gap-1.5">
-                            <span className="font-pixel text-[8px] text-[#FF8A93] shrink-0">▼ NEGATIVO:</span>
-                            <span className="font-vt text-base text-white truncate">
-                              {negatives.length > 0 ? negatives.join(', ') : 'Ninguno'}
-                            </span>
+                          {/* Decisión tomada: sin flecha, color azul (#5CE1E6) y mayor tamaño */}
+                          <div className="font-vt text-xl sm:text-2xl text-[#5CE1E6] font-bold leading-tight mb-1.5">
+                            <span className="text-white/80">Decisión:</span> &ldquo;{item.decisionLabel}&rdquo;
                           </div>
-                        </div>
 
-                        {/* Alerta de efecto dominó o deuda diferida */}
-                        {(item.dominoEvents?.length > 0 || item.delayedSpawned) && (
-                          <div className="mt-1 pt-1 border-t border-white/10 flex flex-wrap gap-2 text-xs font-vt text-[#FF8A93]">
-                            {item.dominoEvents?.length > 0 && (
-                              <span>⚡ {item.dominoEvents.join(' | ')}</span>
-                            )}
-                            {item.delayedSpawned && (
-                              <span className="text-[#F5C66D]">⏳ Deuda a +3T: {item.delayedSpawned}</span>
-                            )}
-                          </div>
-                        )}
+                          {/* Breve descripción explicativa */}
+                          <p className="font-vt text-lg sm:text-xl text-white/90 leading-tight">
+                            {item.causalSummary}
+                          </p>
+                        </div>
                       </div>
                     );
                   })}
@@ -434,9 +434,20 @@ export default function AuditReport({
           <button
             type="button"
             onClick={onRestart}
-            className="pixel-box px-6 py-2.5 sm:py-3 rounded-xl font-pixel text-xs sm:text-sm uppercase bg-[#FFD400] hover:bg-[#ffe34d] border-4 border-white text-[#0B1020] transition cursor-pointer"
+            className="pixel-box px-6 py-2.5 sm:py-3 rounded-xl font-pixel text-xs sm:text-sm uppercase bg-[#FFD400] hover:bg-[#ffe34d] border-4 border-white text-[#0B1020] transition cursor-pointer flex items-center justify-center gap-2.5"
           >
-            JUGAR DE NUEVO ↻
+            <span>JUGAR DE NUEVO</span>
+            <svg
+              className="w-4 h-4 sm:w-4.5 sm:h-4.5 shrink-0 stroke-[3]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="23 4 23 10 17 10" />
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+            </svg>
           </button>
         </div>
       </div>

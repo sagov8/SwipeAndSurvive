@@ -363,7 +363,7 @@ export function gameReducer(state, action) {
           endReason: {
             type: 'ENTROPY_ZERO',
             title: 'CIERRE OPERATIVO POR COLAPSO DE SUBSISTEMA (0%)',
-            detail: `El área de ${subNames[collapsedSubsystem[0]]} cayó a 0% en el Trimestre ${state.quarter}. En AgroCafé Colombiano S.A.S., ningún subsistema es independiente: el colapso de uno detiene toda la empresa.`,
+            detail: `El área de ${subNames[collapsedSubsystem[0]]} cayó a 0% en el Trimestre ${state.quarter}. En AgroCafé Colombiano S.A.S. ningún subsistema es independiente, el colapso de uno detiene toda la empresa.`,
           },
         };
       }

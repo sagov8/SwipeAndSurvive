@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { simulateOptionPreview } from '../engine/gameReducer';
+import CardIllustration from './CardIllustration';
 
 /**
  * Avatares Pixel Art estilo Arcade 8-Bit
@@ -8,44 +9,44 @@ function DepartmentAvatar({ avatarType }) {
   switch (avatarType) {
     case 'tech':
       return (
-        <svg className="w-10 h-10 text-[#36E2F8]" viewBox="0 0 16 16" fill="currentColor">
+        <svg className="w-full h-full text-[#36E2F8]" viewBox="0 0 16 16" fill="currentColor">
           <path d="M4 2h8v2h2v8h-2v2H4v-2H2V4h2V2zm2 4v4h4V6H6z" />
         </svg>
       );
     case 'hr':
       return (
-        <svg className="w-10 h-10 text-[#42F58B]" viewBox="0 0 16 16" fill="currentColor">
+        <svg className="w-full h-full text-[#7CD1CF]" viewBox="0 0 16 16" fill="currentColor">
           <path d="M5 2h6v4H5V2zm-2 6h10v2h1v4H2v-4h1V8z" />
         </svg>
       );
     case 'market':
       return (
-        <svg className="w-10 h-10 text-[#FFD400]" viewBox="0 0 16 16" fill="currentColor">
+        <svg className="w-full h-full text-[#FFD400]" viewBox="0 0 16 16" fill="currentColor">
           <path d="M10 3h4v4h-2V5h-2V3zM2 11h2V9h2V7h2v2h2V7h2v6H2v-2z" />
         </svg>
       );
     case 'finance':
       return (
-        <svg className="w-10 h-10 text-[#FFD400]" viewBox="0 0 16 16" fill="currentColor">
+        <svg className="w-full h-full text-[#FFD400]" viewBox="0 0 16 16" fill="currentColor">
           <path d="M7 1h2v2h3v2H6v2h6v4H9v2H7v-2H4V9h6V7H4V3h3V1z" />
         </svg>
       );
     case 'security':
       return (
-        <svg className="w-10 h-10 text-[#7CD1CF]" viewBox="0 0 16 16" fill="currentColor">
+        <svg className="w-full h-full text-[#7CD1CF]" viewBox="0 0 16 16" fill="currentColor">
           <path d="M3 2h10v6H11v3H9v2H7v-2H5V8H3V2zm3 3v3h4V5H6z" />
         </svg>
       );
     case 'nexus':
       return (
-        <svg className="w-10 h-10 text-[#FF73A1]" viewBox="0 0 16 16" fill="currentColor">
+        <svg className="w-full h-full text-[#FF73A1]" viewBox="0 0 16 16" fill="currentColor">
           <path d="M4 2h8v2h2v8h-2v2h-2v-2H6v2H4v-2H2V4h2V2zm2 4v2h1V6H6zm4 0v2h1V6h-1z" />
         </svg>
       );
     case 'crisis':
     default:
       return (
-        <svg className="w-10 h-10 text-[#E53945]" viewBox="0 0 16 16" fill="currentColor">
+        <svg className="w-full h-full text-[#E53945]" viewBox="0 0 16 16" fill="currentColor">
           <path d="M7 2h2v3h2v3h2v5H3V8h2V5h2V2zm0 4v4h2V6H7zm0 5v1h2v-1H7z" />
         </svg>
       );
@@ -68,46 +69,46 @@ function RadarSidePanel({ side, title, optionLabel, sim, isHighlighted, onSelect
   return (
     <div
       onClick={onSelect}
-      className={`w-full lg:w-60 xl:w-72 shrink-0 rounded-2xl bg-[#08182B]/95 border-4 p-3 sm:p-4 shadow-[0_6px_0_#0B1020] transition-all cursor-pointer ${
+      className={`w-full lg:w-56 xl:w-64 shrink-0 rounded-xl sm:rounded-2xl bg-[#08182B]/95 border-3 sm:border-4 p-2.5 sm:p-3.5 shadow-[0_4px_0_#0B1020] transition-all cursor-pointer ${
         isHighlighted
           ? 'border-[#FFD400] scale-[1.02]'
           : 'border-[#7CD1CF]'
       }`}
     >
       {/* Cabecera del Radar Lateral con Lupa */}
-      <div className="flex items-center justify-between gap-1 pb-2 mb-2 border-b-2 border-white/25">
-        <span className="font-pixel text-[9px] sm:text-[10px] text-[#FFD400] uppercase flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5 text-[#FFD400]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div className="flex items-center justify-between gap-1 pb-1.5 mb-1.5 border-b-2 border-white/25">
+        <span className="font-pixel text-[8px] sm:text-[9px] text-[#FFD400] uppercase flex items-center gap-1">
+          <svg className="w-3 h-3 text-[#FFD400]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <span>{side === 'left' ? '◀ RADAR IZQ' : 'RADAR DER ▶'}</span>
         </span>
-        <span className="px-1.5 py-0.5 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[8px] flex items-center gap-1">
+        <span className="px-1 py-0.5 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[7px] sm:text-[8px] flex items-center gap-1">
           <span>🔍</span>
           <span>SCAN</span>
         </span>
       </div>
 
       {/* Nombre de la opción sin truncar */}
-      <div className="font-vt text-lg sm:text-xl text-white font-bold leading-tight mb-2.5 break-words">
+      <div className="font-vt text-base sm:text-lg text-white font-bold leading-tight mb-1.5 break-words">
         <span className="text-[#7CD1CF]">{title}:</span> {optionLabel}
       </div>
 
       {/* Lista de Impactos en los 4 Subsistemas */}
-      <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5">
+      <div className="grid grid-cols-2 lg:grid-cols-1 gap-1">
         {items.map((it) => (
           <div
             key={it.k}
-            className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#0F2C4C] border border-white/25"
+            className="flex items-center justify-between px-2 py-1 rounded bg-[#0F2C4C] border border-white/25"
           >
-            <span className="font-pixel text-[8px] sm:text-[9px] text-white flex items-center gap-1.5">
+            <span className="font-pixel text-[7px] sm:text-[8px] text-white flex items-center gap-1">
               <span>{it.icon}</span>
               <span>{it.name}</span>
             </span>
 
             <span
-              className={`font-pixel text-[10px] sm:text-xs ${
+              className={`font-pixel text-[9px] sm:text-[10px] ${
                 it.v > 0
                   ? 'text-[#42F58B]'
                   : it.v < 0
@@ -123,11 +124,11 @@ function RadarSidePanel({ side, title, optionLabel, sim, isHighlighted, onSelect
 
       {/* Advertencias de Deuda Diferida (+3T) o Efecto Dominó */}
       {sim.warnings.length > 0 ? (
-        <div className="mt-2.5 p-2 rounded-lg bg-[#3B1022] border-2 border-[#E53945] font-vt text-base sm:text-lg text-[#FF8A93] leading-tight">
+        <div className="mt-1.5 p-1.5 rounded bg-[#3B1022] border-2 border-[#E53945] font-vt text-sm sm:text-base text-[#FF8A93] leading-tight">
           ⚠️ {sim.warnings.join(' | ')}
         </div>
       ) : (
-        <div className="mt-2.5 p-1.5 rounded-lg bg-[#0F332B] border border-[#42F58B]/60 font-vt text-base text-[#42F58B] text-center leading-tight">
+        <div className="mt-1.5 p-1 rounded bg-[#0F332B] border border-[#42F58B]/60 font-vt text-xs sm:text-sm text-[#42F58B] text-center leading-tight">
           ✓ Sin deuda diferida oculta
         </div>
       )}
@@ -221,7 +222,7 @@ export default function SwipeCard({
     : null;
 
   return (
-    <div className="relative z-10 w-full max-w-7xl mx-auto px-2 sm:px-4 flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 xl:gap-10 my-auto">
+    <div className="relative z-10 w-full max-w-7xl mx-auto px-2 sm:px-4 flex flex-col lg:flex-row items-center justify-center gap-2 sm:gap-4 lg:gap-6 xl:gap-8 my-auto">
       {/* PANEL DE RADAR LATERAL IZQUIERDO (Desktop) */}
       {gameState.radarActiveForTurn && leftSim && (
         <div className="hidden lg:block">
@@ -249,7 +250,7 @@ export default function SwipeCard({
             opacity: opacityVal,
             touchAction: 'none',
           }}
-          className={`w-full rounded-2xl p-4 sm:p-5 cursor-grab active:cursor-grabbing relative overflow-hidden border-4 shadow-[0_8px_0_#0B1020] ${
+          className={`w-full rounded-xl sm:rounded-2xl p-2 sm:p-3 md:p-4 cursor-grab active:cursor-grabbing relative overflow-hidden border-3 sm:border-4 shadow-[0_6px_0_#0B1020] ${
             isCrisisCard
               ? 'bg-[#3B1022]/95 border-[#E53945]'
               : isNegentropyCard
@@ -258,57 +259,80 @@ export default function SwipeCard({
           }`}
         >
           {/* Top Category & TGS Concept Pill */}
-          <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-            <span
-              className={`font-pixel text-[9px] sm:text-[10px] uppercase px-2.5 py-1 rounded border-2 ${
-                card.category === 'ENVIRONMENT'
-                  ? 'bg-[#E53945] border-white text-white'
-                  : card.category === 'DELAYED'
-                  ? 'bg-[#FFD400] border-[#0B1020] text-[#0B1020]'
-                  : card.category === 'NEGENTROPY'
-                  ? 'bg-[#7CD1CF] border-[#0B1020] text-[#0B1020]'
-                  : 'bg-[#192853] border-[#7CD1CF] text-[#FFD400]'
-              }`}
-            >
-              {card.categoryLabel}
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 mb-1 sm:mb-1.5">
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+              <span
+                className={`font-pixel text-[8px] sm:text-[9px] md:text-[10px] uppercase px-2 sm:px-2.5 py-0.5 sm:py-1 rounded border-2 ${
+                  card.category === 'ENVIRONMENT'
+                    ? 'bg-[#E53945] border-white text-white'
+                    : card.category === 'DELAYED'
+                    ? 'bg-[#FFD400] border-[#0B1020] text-[#0B1020]'
+                    : card.category === 'NEGENTROPY'
+                    ? 'bg-[#7CD1CF] border-[#0B1020] text-[#0B1020]'
+                    : 'bg-[#192853] border-[#7CD1CF] text-[#FFD400]'
+                }`}
+              >
+                {card.categoryLabel}
+              </span>
 
-            <span className="font-vt text-lg sm:text-xl text-[#7CD1CF] truncate max-w-[280px]">
+              {/* Indicador de Turno para Modo Junta Directiva (2-4 Jugadores) */}
+              {gameState.gameMode === 'BOARD' && (() => {
+                const playerTurn = ((gameState.quarter - 1) % 4) + 1;
+                const playerRoles = {
+                  1: { name: 'FINANZAS', color: 'bg-[#FFD400] text-[#0B1020]' },
+                  2: { name: 'TALENTO', color: 'bg-[#42F58B] text-[#0B1020]' },
+                  3: { name: 'COMERCIAL', color: 'bg-[#FF5E7E] text-white' },
+                  4: { name: 'PLANTA', color: 'bg-[#36E2F8] text-[#0B1020]' },
+                };
+                const p = playerRoles[playerTurn];
+                return (
+                  <span className={`font-pixel text-[7px] sm:text-[8px] md:text-[9px] uppercase px-1.5 sm:px-2 py-0.5 rounded border-2 border-white shadow-[0_2px_0_#0B1020] ${p.color}`}>
+                    🎮 DECIDE P{playerTurn}
+                  </span>
+                );
+              })()}
+            </div>
+
+            <span className="font-vt text-base sm:text-lg md:text-xl text-[#7CD1CF] truncate max-w-[200px] sm:max-w-[280px]">
               {card.tgsConcept}
             </span>
           </div>
 
           {/* Sender & Avatar Header */}
-          <div className="flex items-center gap-3 pb-2.5 mb-2.5 border-b-2 border-white/25">
-            <div className="w-12 h-12 p-1.5 rounded-lg bg-[#08182B] border-2 border-white flex items-center justify-center shrink-0 shadow-[0_3px_0_#0B1020]">
+          <div className="flex items-center gap-2 sm:gap-2.5 pb-1 sm:pb-1.5 mb-1 border-b-2 border-white/20">
+            <div className="w-7 h-7 sm:w-9 sm:h-9 p-0.5 sm:p-1 rounded bg-[#08182B] border-2 border-white flex items-center justify-center shrink-0 shadow-[0_2px_0_#0B1020]">
               <DepartmentAvatar avatarType={card.avatarType} />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="font-pixel text-xs sm:text-sm text-[#FFD400] truncate arcade-text-shadow">
+              <div className="font-pixel text-[9px] sm:text-xs text-[#FFD400] truncate arcade-text-shadow">
                 {card.sender}
               </div>
-              <div className="font-vt text-xl sm:text-2xl text-white/90 truncate leading-none mt-1">
+              <div className="font-vt text-sm sm:text-base md:text-lg text-white/90 truncate leading-none mt-0.5">
                 {card.role}
               </div>
             </div>
 
             {activeDir && (
-              <div className="px-3 py-1 rounded font-pixel text-[9px] sm:text-[10px] uppercase border-2 bg-[#7CD1CF] border-[#0B1020] text-[#0B1020]">
+              <div className="px-2 py-0.5 rounded font-pixel text-[8px] sm:text-[9px] uppercase border-2 bg-[#7CD1CF] border-[#0B1020] text-[#0B1020]">
                 {activeDir === 'left' ? '◀ OPCIÓN A' : 'OPCIÓN B ▶'}
               </div>
             )}
           </div>
 
           {/* Dilemma Title & Narrative */}
-          <h2 className="font-pixel text-sm sm:text-base text-white mb-2 leading-snug arcade-text-shadow">
+          <h2 className="font-pixel text-[9px] sm:text-xs text-white mb-0.5 leading-tight truncate arcade-text-shadow">
             {card.title}
           </h2>
-          <p className="font-vt text-2xl sm:text-[25px] text-white leading-snug mb-4">
+
+          {/* Ilustración / Animación Pixel Art que resume la situación */}
+          <CardIllustration card={card} />
+
+          <p className="font-vt text-base sm:text-lg md:text-xl text-white leading-tight line-clamp-3 mb-1.5 sm:mb-2">
             {card.description}
           </p>
 
           {/* Botones Únicos de Decisión dentro de la Tarjeta (Colores Simétricos y Neutros) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
             <button
               type="button"
               data-choice-btn="true"
@@ -318,21 +342,21 @@ export default function SwipeCard({
               onFocus={() => !isAnimating && onPreviewChange('left')}
               onBlur={() => !isAnimating && onPreviewChange(null)}
               onClick={() => !isAnimating && onConfirmDecision('left')}
-              className={`pixel-box rounded-xl p-3 sm:p-4 border-4 transition-all text-left cursor-pointer flex flex-col justify-between ${
+              className={`pixel-box rounded-lg sm:rounded-xl p-1.5 sm:p-2 md:p-2.5 border-2 sm:border-3 transition-all text-left cursor-pointer flex flex-col justify-between ${
                 activeDir === 'left'
                   ? 'bg-[#7CD1CF] border-white text-[#0B1020] scale-[1.02]'
                   : 'bg-[#192853] hover:bg-[#22356F] border-white/80 text-white'
               }`}
             >
               <div
-                className={`font-pixel text-[9px] sm:text-[10px] uppercase mb-1 flex items-center gap-1.5 ${
+                className={`font-pixel text-[7px] sm:text-[8px] uppercase mb-0.5 flex items-center gap-1 ${
                   activeDir === 'left' ? 'text-[#0B1020]' : 'text-[#7CD1CF]'
                 }`}
               >
                 <span>◀</span>
-                <span>OPCIÓN IZQUIERDA</span>
+                <span>OPCIÓN IZQ</span>
               </div>
-              <div className="font-vt text-xl sm:text-2xl font-bold leading-tight">
+              <div className="font-vt text-sm sm:text-base md:text-lg font-bold leading-tight line-clamp-2">
                 {card.left.label}
               </div>
             </button>
@@ -346,21 +370,21 @@ export default function SwipeCard({
               onFocus={() => !isAnimating && onPreviewChange('right')}
               onBlur={() => !isAnimating && onPreviewChange(null)}
               onClick={() => !isAnimating && onConfirmDecision('right')}
-              className={`pixel-box rounded-xl p-3 sm:p-4 border-4 transition-all text-left sm:text-right cursor-pointer flex flex-col justify-between ${
+              className={`pixel-box rounded-lg sm:rounded-xl p-1.5 sm:p-2 md:p-2.5 border-2 sm:border-3 transition-all text-left sm:text-right cursor-pointer flex flex-col justify-between ${
                 activeDir === 'right'
                   ? 'bg-[#7CD1CF] border-white text-[#0B1020] scale-[1.02]'
                   : 'bg-[#192853] hover:bg-[#22356F] border-white/80 text-white'
               }`}
             >
               <div
-                className={`font-pixel text-[9px] sm:text-[10px] uppercase mb-1 flex items-center sm:justify-end gap-1.5 ${
+                className={`font-pixel text-[7px] sm:text-[8px] uppercase mb-0.5 flex items-center sm:justify-end gap-1 ${
                   activeDir === 'right' ? 'text-[#0B1020]' : 'text-[#7CD1CF]'
                 }`}
               >
-                <span>OPCIÓN DERECHA</span>
+                <span>OPCIÓN DER</span>
                 <span>▶</span>
               </div>
-              <div className="font-vt text-xl sm:text-2xl font-bold leading-tight">
+              <div className="font-vt text-sm sm:text-base md:text-lg font-bold leading-tight line-clamp-2">
                 {card.right.label}
               </div>
             </button>

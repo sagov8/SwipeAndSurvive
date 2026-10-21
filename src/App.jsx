@@ -9,6 +9,7 @@ import SwipeCard from './components/SwipeCard';
 import BottomControl from './components/BottomControl';
 import CrisisModal from './components/CrisisModal';
 import AuditReport, { computeRankAndSummary } from './components/AuditReport';
+import DecisionFeedbackOverlay from './components/DecisionFeedbackOverlay';
 
 export default function App() {
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState);
@@ -17,8 +18,10 @@ export default function App() {
   const [previewDirection, setPreviewDirection] = useState(null);
   const [isMuted, setIsMuted] = useState(false);
   const [records, setRecords] = useState(() => loadTournamentRecords());
+  const [transientFeedback, setTransientFeedback] = useState(null);
 
   const savedEndRef = useRef(false);
+  const feedbackTimeoutRef = useRef(null);
 
   // Iniciar simulación e inicializar Web Audio API dentro del evento de usuario
   const handleStartSimulation = useCallback(({ strategyPath, gameMode }) => {
@@ -53,15 +56,41 @@ export default function App() {
     dispatch({ type: 'DISMISS_CRISIS_MODAL' });
   }, []);
 
-  // Confirmar decisión con Lock de Input de ~450ms para evitar condiciones de carrera
+  // Confirmar decisión con Lock de Input de ~450ms para evitar condiciones de carrera y disparar efectos transitorios
   const handleConfirmDecision = useCallback(
     (direction) => {
       if (isAnimating || gameState.status !== 'PLAYING' || !gameState.currentCard) return;
+
+      const card = gameState.currentCard;
+      const choice = direction === 'left' ? card.left : card.right;
+      const deltas = choice?.effects || {};
 
       setIsAnimating(true);
       setAnimatingDirection(direction);
       setPreviewDirection(null);
       soundEngine.playSwipe(direction);
+
+      // Disparar audio contextual según el impacto de la decisión
+      setTimeout(() => {
+        if (deltas.liquidity > 0) {
+          soundEngine.playCoinVictory();
+        } else if (deltas.morale < 0 || deltas.demand < 0) {
+          soundEngine.playBooCrowd();
+        } else if (deltas.tech < 0) {
+          soundEngine.playIndustrialBreak();
+        } else if (deltas.liquidity < 0) {
+          soundEngine.playCashLoss();
+        }
+      }, 150);
+
+      // Mostrar overlay visual transitorio (desaparece a los 5 segundos)
+      setTransientFeedback({ deltas });
+      if (feedbackTimeoutRef.current) {
+        clearTimeout(feedbackTimeoutRef.current);
+      }
+      feedbackTimeoutRef.current = setTimeout(() => {
+        setTransientFeedback(null);
+      }, 5000);
 
       setTimeout(() => {
         dispatch({
@@ -185,7 +214,7 @@ export default function App() {
             overloadCounter={gameState.overloadCounter}
           />
 
-          <main className="flex-1 flex items-center justify-center relative z-10 overflow-hidden py-1">
+          <main className="flex-1 min-h-0 flex items-center justify-center relative z-10 overflow-y-auto px-1 sm:px-2 py-0.5 sm:py-1">
             <SwipeCard
               gameState={gameState}
               card={gameState.currentCard}
@@ -198,6 +227,9 @@ export default function App() {
           </main>
 
           <BottomControl gameState={gameState} />
+
+          {/* Efectos Visuales Transitorios tras Decisiones (Monedas, Humo, Protestas, Caída de dinero) */}
+          <DecisionFeedbackOverlay feedback={transientFeedback} />
         </>
       )}
 

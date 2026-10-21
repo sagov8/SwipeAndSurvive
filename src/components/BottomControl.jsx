@@ -19,20 +19,20 @@ export default function BottomControl({ gameState }) {
   }
 
   return (
-    <footer className="w-full px-2.5 sm:px-4 pb-3 pt-1 z-20 shrink-0">
+    <footer className="w-full px-2 sm:px-4 pb-1 pt-0.5 z-20 shrink-0">
       <div className="max-w-5xl mx-auto">
         {/* Banner de Dirección Estratégica (Consejos, Diagnósticos y Alertas) */}
         <div
-          className={`rounded-xl px-4 py-2.5 border-2 shadow-[0_4px_0_#0B1020] flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3.5 ${nexusBorder}`}
+          className={`rounded-lg sm:rounded-xl px-2.5 sm:px-3.5 py-1 border-2 shadow-[0_2px_0_#0B1020] flex items-center gap-2 sm:gap-3 ${nexusBorder}`}
         >
           <div className="flex items-center gap-1.5 shrink-0">
             <span
-              className={`font-pixel text-[9px] sm:text-[10px] uppercase px-2.5 py-1 rounded border-2 ${nexusBadge}`}
+              className={`font-pixel text-[8px] sm:text-[9px] uppercase px-2 py-0.5 rounded border-2 ${nexusBadge}`}
             >
               {nexus.tag}
             </span>
           </div>
-          <p className="font-vt text-xl sm:text-2xl text-white leading-tight">
+          <p className="font-vt text-base sm:text-lg md:text-xl text-white leading-tight min-w-0 line-clamp-1 sm:line-clamp-2">
             {nexus.message}
           </p>
         </div>

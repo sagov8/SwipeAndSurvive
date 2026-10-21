@@ -196,6 +196,126 @@ class CyberSoundEngine {
       // Ignore audio errors
     }
   }
+
+  /**
+   * Efecto sonoro de ganancia / triunfo financiero (campanilleo ascendente de monedas 'coin pickup')
+   */
+  playCoinVictory() {
+    if (this.muted) return;
+    try {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const notes = [987.77, 1318.51]; // B5 -> E6
+      notes.forEach((freq, idx) => {
+        const start = now + idx * 0.08;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, start);
+
+        gain.gain.setValueAtTime(0.12, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.18);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(start);
+        osc.stop(start + 0.19);
+      });
+    } catch {
+      // Ignore audio errors
+    }
+  }
+
+  /**
+   * Efecto sonoro de descontento / abucheo / queja de trabajadores o clientes (tono grave descendente modulado)
+   */
+  playBooCrowd() {
+    if (this.muted) return;
+    try {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.exponentialRampToValueAtTime(75, now + 0.35);
+
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.4);
+    } catch {
+      // Ignore audio errors
+    }
+  }
+
+  /**
+   * Efecto sonoro de fallo en planta / chimenea / avería de maquinaria (pulso ruidoso distorsionado)
+   */
+  playIndustrialBreak() {
+    if (this.muted) return;
+    try {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(110, now);
+      osc.frequency.linearRampToValueAtTime(45, now + 0.3);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(320, now);
+
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.34);
+    } catch {
+      // Ignore audio errors
+    }
+  }
+
+  /**
+   * Efecto sonoro de pérdida financiera (caída rápida de tono)
+   */
+  playCashLoss() {
+    if (this.muted) return;
+    try {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(180, now + 0.25);
+
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.28);
+    } catch {
+      // Ignore audio errors
+    }
+  }
 }
 
 export const soundEngine = new CyberSoundEngine();
