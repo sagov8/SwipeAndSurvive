@@ -1,33 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { STRATEGY_PATHS } from '../data/cardsCatalog';
 import { soundEngine } from '../engine/soundEngine';
 import { SubsystemIcon } from './SubsystemIcons';
 
 export function computeRankAndSummary(gameState) {
-  const { status, score, quarter, causalHistory, auditStats } = gameState;
+  const { status, score, causalHistory, auditStats } = gameState;
   const totalTurns = Math.max(1, causalHistory.length);
   const homeostasisIndex = Math.round((auditStats.homeostasisTurns / totalTurns) * 100);
 
-  let rank = 'Gerente en Prueba';
-  let rankBadgeColor = 'text-white border-white bg-[#192853]';
+  let rank = 'Rango D (Quiebra Operativa)';
+  let rankGrade = 'D';
+  let rankTitle = 'Quiebra Operativa';
+  let rankBadgeColor = 'text-white border-white bg-[#E53945]';
+  let rankDescription = 'Desbalance terminal antes de 20 trimestres.';
 
   if (status === 'VICTORY') {
-    if (homeostasisIndex >= 65 && auditStats.r1LoopCount <= 1 && score >= 2800) {
-      rank = 'Maestro Cafetero Sistémico';
+    if (score >= 3000) {
+      rank = 'Rango A+ (Gerente Emérito)';
+      rankGrade = 'A+';
+      rankTitle = 'Gerente Emérito';
       rankBadgeColor = 'text-[#0B1020] border-white bg-[#42F58B]';
-    } else if (homeostasisIndex >= 40 || score >= 2300) {
-      rank = 'Director Agroindustrial';
+      rankDescription = 'Control homeostático integral y balance dinámico continuo.';
+    } else if (score >= 2400) {
+      rank = 'Rango A (Líder Sistémico)';
+      rankGrade = 'A';
+      rankTitle = 'Líder Sistémico';
       rankBadgeColor = 'text-[#0B1020] border-white bg-[#FFD400]';
-    } else {
-      rank = 'Gestor de Crisis';
+      rankDescription = 'Visión holística consistente y capacidad de anticipación.';
+    } else if (score >= 1800) {
+      rank = 'Rango B (Gestor de Crisis)';
+      rankGrade = 'B';
+      rankTitle = 'Gestor de Crisis';
       rankBadgeColor = 'text-[#0B1020] border-white bg-[#7CD1CF]';
-    }
-  } else {
-    if (quarter >= 14) {
-      rank = 'Gestor de Crisis';
-      rankBadgeColor = 'text-[#0B1020] border-white bg-[#FFD400]';
+      rankDescription = 'Supervivencia con desbalances parciales.';
     } else {
-      rank = 'Gerente en Prueba';
+      rank = 'Rango C (Superviviente Entrópico)';
+      rankGrade = 'C';
+      rankTitle = 'Superviviente Entrópico';
+      rankBadgeColor = 'text-white border-white bg-[#24486E]';
+      rankDescription = 'Funcionamiento al límite de la capacidad.';
     }
   }
 
@@ -37,7 +48,10 @@ export function computeRankAndSummary(gameState) {
 
   return {
     rank,
+    rankGrade,
+    rankTitle,
     rankBadgeColor,
+    rankDescription,
     homeostasisIndex,
     totalTurns,
     top3Decisions,
@@ -58,17 +72,29 @@ export default function AuditReport({
   onRestart,
 }) {
   const [activeTab, setActiveTab] = useState('MAIN');
+  const scrollContainerRef = useRef(null);
 
   const { status, score, quarter, maxQuarters, strategyPath, metrics, auditStats, endReason } =
     gameState;
   const isVictory = status === 'VICTORY';
   const strategyInfo = STRATEGY_PATHS[strategyPath] || STRATEGY_PATHS.AUTOMATIZACION;
-  const { rank, rankBadgeColor, homeostasisIndex, totalTurns, top3Decisions } =
-    computeRankAndSummary(gameState);
+  const {
+    rank,
+    rankGrade,
+    rankTitle,
+    rankBadgeColor,
+    rankDescription,
+    homeostasisIndex,
+    totalTurns,
+    top3Decisions,
+  } = computeRankAndSummary(gameState);
 
   const handleSelectTab = (tabId) => {
     soundEngine.playCardAppear();
     setActiveTab(tabId);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
   };
 
   return (
@@ -108,12 +134,15 @@ export default function AuditReport({
         </div>
 
         {/* 2. CONTENIDO CENTRAL SEGÚN PESTAÑA ACTIVA */}
-        <div className="flex-1 flex flex-col justify-center my-3 overflow-y-auto audit-scroll px-1">
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 min-h-0 my-2 sm:my-3 overflow-y-auto audit-scroll px-1 py-1"
+        >
           {/* ============================================================== */}
           {/* PESTAÑA PRINCIPAL: GAME OVER + SCORE + RANGO + CAUSA           */}
           {/* ============================================================== */}
           {activeTab === 'MAIN' && (
-            <div className="flex flex-col items-center justify-evenly text-center h-full py-2 gap-4">
+            <div className="flex flex-col items-center justify-evenly text-center min-h-full py-2 gap-3 sm:gap-4">
               <div>
                 <h1
                   className={`font-pixel text-2xl sm:text-4xl arcade-text-shadow leading-tight ${
@@ -128,14 +157,22 @@ export default function AuditReport({
               </div>
 
               {/* Tarjetas Grandes de Rango y Score */}
-              <div className="flex flex-wrap items-center justify-center gap-4 w-full max-w-lg">
+              <div className="flex flex-wrap items-center justify-center gap-4 w-full max-w-xl">
                 <div
-                  className={`flex-1 min-w-[180px] p-4 rounded-xl border-4 shadow-[0_5px_0_#0B1020] ${rankBadgeColor}`}
+                  className={`flex-1 min-w-[220px] p-4 rounded-xl border-4 shadow-[0_5px_0_#0B1020] ${rankBadgeColor}`}
                 >
-                  <div className="font-pixel text-[9px] uppercase opacity-80 mb-1">
-                    RANGO ALCANZADO
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-pixel text-[9px] uppercase tracking-wider opacity-90">
+                      RANGO ALCANZADO
+                    </span>
+                    <span className="font-pixel text-xs sm:text-sm px-2 py-0.5 rounded bg-black/25 font-bold border border-current">
+                      {rankGrade}
+                    </span>
                   </div>
-                  <div className="font-pixel text-xs sm:text-sm leading-snug">{rank}</div>
+                  <div className="font-pixel text-xs sm:text-sm leading-snug mb-1">{rankTitle}</div>
+                  <div className="font-vt text-base sm:text-lg leading-tight opacity-95">
+                    {rankDescription}
+                  </div>
                 </div>
 
                 <div className="flex-1 min-w-[160px] p-4 rounded-xl bg-[#08182B] border-4 border-[#FFD400] shadow-[0_5px_0_#0B1020]">
@@ -341,7 +378,7 @@ export default function AuditReport({
           {/* PESTAÑA 4: TOP DECISIONES — ESCALAFÓN TIPO PODIO               */}
           {/* ============================================================== */}
           {activeTab === 'STAT_4' && (
-            <div className="w-full max-w-2xl mx-auto space-y-3">
+            <div className="w-full max-w-2xl mx-auto space-y-3 pt-1">
               <div className="text-center mb-1">
                 <span className="inline-block px-3 py-1 rounded bg-[#7CD1CF] text-[#0B1020] font-pixel text-[9px] uppercase">
                   ESTADÍSTICA 4 // PODIO DE DECISIONES DE MAYOR IMPACTO
