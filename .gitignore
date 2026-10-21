@@ -31,3 +31,14 @@ dist-ssr/
 AGENTS.md
 Juego.md
 node_modules
+
+# Temporary test and browser profiles
+.tmp-chrome/
+.tmp*/
+*.tmp
+.cache/
+.vite/
+coverage/
+
+# Environment variables
+.env*.local
